@@ -4,7 +4,8 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::{Error, Result};
+use crate::error::PngError::NonAlphabeticBytesError;
+use crate::error::{Error, Result};
 
 /// A validated PNG chunk type. See the PNG spec for more details.
 /// http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html
@@ -50,18 +51,19 @@ impl TryFrom<[u8; 4]> for ChunkType {
     type Error = Error;
 
     fn try_from(bytes: [u8; 4]) -> Result<Self> {
-        if bytes.iter().all(|b| b.is_ascii_alphabetic()) {
-            Ok(Self { bytes })
-        } else {
-            Err("bytes are not ascii alphabetic".into())
+        for byte in bytes {
+            if !byte.is_ascii_alphabetic() {
+                return Err(Box::new(NonAlphabeticBytesError(byte)));
+            }
         }
+        Ok(Self { bytes })
     }
 }
 
 impl fmt::Display for ChunkType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = std::str::from_utf8(&self.bytes)
-            .expect("validated during construction");
+            .expect("validated when constructed");
         write!(f, "{}", s)
     }
 }
