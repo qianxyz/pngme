@@ -4,7 +4,7 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::error::PngError::NonAlphabeticBytesError;
+use crate::error::PngError::InvalidChunkType;
 use crate::error::{Error, Result};
 
 /// A validated PNG chunk type. See the PNG spec for more details.
@@ -51,12 +51,11 @@ impl TryFrom<[u8; 4]> for ChunkType {
     type Error = Error;
 
     fn try_from(bytes: [u8; 4]) -> Result<Self> {
-        for byte in bytes {
-            if !byte.is_ascii_alphabetic() {
-                return Err(Box::new(NonAlphabeticBytesError(byte)));
-            }
+        if !bytes.iter().all(|b| b.is_ascii_alphabetic()) {
+            Err(InvalidChunkType(bytes).into())
+        } else {
+            Ok(Self { bytes })
         }
-        Ok(Self { bytes })
     }
 }
 
