@@ -7,6 +7,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum PngError {
     InvalidChunkType([u8; 4]),
     InvalidCrc(u32, u32),
+    ChunkTypeNotFound(String),
+    InvalidHeader([u8; 8]),
 }
 
 impl fmt::Display for PngError {
@@ -17,6 +19,12 @@ impl fmt::Display for PngError {
             }
             Self::InvalidCrc(expected, found) => {
                 write!(f, "invalid CRC: expect {}, found {}", expected, found)
+            }
+            Self::ChunkTypeNotFound(chunk_type) => {
+                write!(f, "chunk type {} not found", chunk_type)
+            }
+            Self::InvalidHeader(header) => {
+                write!(f, "invalid PNG header {:?}", header)
             }
         }
     }
