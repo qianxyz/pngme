@@ -6,13 +6,17 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug)]
 pub enum PngError {
     InvalidChunkType([u8; 4]),
+    InvalidCrc(u32, u32),
 }
 
 impl fmt::Display for PngError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::InvalidChunkType(bytes) => {
-                write!(f, "invalid chunk type {:02x?}", bytes)
+                write!(f, "invalid chunk type: {:02x?}", bytes)
+            }
+            Self::InvalidCrc(expected, found) => {
+                write!(f, "invalid CRC: expect {}, found {}", expected, found)
             }
         }
     }
