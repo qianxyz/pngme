@@ -39,7 +39,7 @@ enum Commands {
 }
 
 #[derive(Args, Debug)]
-struct EncodeArgs {
+pub struct EncodeArgs {
     /// The PNG file to be encoded into
     file_path: PathBuf,
 
@@ -55,7 +55,7 @@ struct EncodeArgs {
 }
 
 #[derive(Args, Debug)]
-struct DecodeArgs {
+pub struct DecodeArgs {
     /// The PNG file to be decoded
     file_path: PathBuf,
 
@@ -65,7 +65,7 @@ struct DecodeArgs {
 }
 
 #[derive(Args, Debug)]
-struct RemoveArgs {
+pub struct RemoveArgs {
     /// The PNG file to be operated on
     file_path: PathBuf,
 
@@ -75,7 +75,7 @@ struct RemoveArgs {
 }
 
 #[derive(Args, Debug)]
-struct PrintArgs {
+pub struct PrintArgs {
     /// The PNG file to be printed
     file_path: PathBuf,
 }
