@@ -5,7 +5,7 @@ mod commands;
 mod error;
 mod png;
 
-use error::Result;
+pub use error::{Error, Result};
 
 fn main() -> Result<()> {
     todo!()

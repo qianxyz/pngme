@@ -8,7 +8,7 @@ use std::path::Path;
 
 use crate::chunk::Chunk;
 use crate::error::PngError::{ChunkTypeNotFound, InvalidHeader};
-use crate::error::{Error, Result};
+use crate::{Error, Result};
 
 /// A PNG container as described by the PNG spec
 /// http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
@@ -103,8 +103,10 @@ impl TryFrom<&[u8]> for Png {
             let mut remain = vec![0u8; (4 + length + 4) as usize];
             reader.read_exact(&mut remain)?;
 
-            let chunk_bytes: Vec<u8> =
-                length_buffer.into_iter().chain(remain.into_iter()).collect();
+            let chunk_bytes: Vec<u8> = length_buffer
+                .into_iter()
+                .chain(remain.into_iter())
+                .collect();
             let chunk = Chunk::try_from(chunk_bytes.as_ref())?;
 
             chunks.push(chunk);

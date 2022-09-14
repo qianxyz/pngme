@@ -6,7 +6,7 @@ use std::io::{BufReader, Read};
 
 use crate::chunk_type::ChunkType;
 use crate::error::PngError::InvalidCrc;
-use crate::error::{Error, Result};
+use crate::{Error, Result};
 
 use crc::{Crc, CRC_32_ISO_HDLC};
 
