@@ -7,6 +7,12 @@ mod png;
 
 pub use error::{Error, Result};
 
+use clap::Parser;
+
 fn main() -> Result<()> {
-    todo!()
+    let cli = args::Cli::parse();
+
+    println!("{:?}", cli);
+
+    Ok(())
 }
