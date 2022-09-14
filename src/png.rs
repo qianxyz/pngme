@@ -77,8 +77,7 @@ impl Png {
     /// the header followed by the bytes of all of the chunks.
     pub fn as_bytes(&self) -> Vec<u8> {
         self.header
-            .iter()
-            .copied()
+            .into_iter()
             .chain(self.chunks.iter().flat_map(|c| c.as_bytes()))
             .collect()
     }
@@ -105,7 +104,7 @@ impl TryFrom<&[u8]> for Png {
             reader.read_exact(&mut remain)?;
 
             let chunk_bytes: Vec<u8> =
-                length_buffer.iter().chain(remain.iter()).copied().collect();
+                length_buffer.into_iter().chain(remain.into_iter()).collect();
             let chunk = Chunk::try_from(chunk_bytes.as_ref())?;
 
             chunks.push(chunk);
