@@ -7,7 +7,7 @@ use std::io::{BufReader, Read};
 use std::path::Path;
 
 use crate::chunk::Chunk;
-use crate::error::PngError::{ChunkTypeNotFound, InvalidHeader};
+use crate::error::PngMeError::{ChunkTypeNotFound, InvalidHeader};
 use crate::{Error, Result};
 
 /// A PNG container as described by the PNG spec

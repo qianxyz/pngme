@@ -4,7 +4,7 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::error::PngError::InvalidChunkType;
+use crate::error::PngMeError::InvalidChunkType;
 use crate::{Error, Result};
 
 /// A validated PNG chunk type. See the PNG spec for more details.

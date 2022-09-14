@@ -4,14 +4,14 @@ pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
-pub enum PngError {
+pub enum PngMeError {
     InvalidChunkType([u8; 4]),
     InvalidCrc(u32, u32),
     ChunkTypeNotFound(String),
     InvalidHeader([u8; 8]),
 }
 
-impl fmt::Display for PngError {
+impl fmt::Display for PngMeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::InvalidChunkType(bytes) => {
@@ -30,4 +30,4 @@ impl fmt::Display for PngError {
     }
 }
 
-impl std::error::Error for PngError {}
+impl std::error::Error for PngMeError {}
