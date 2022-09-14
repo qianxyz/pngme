@@ -119,12 +119,12 @@ impl TryFrom<&[u8]> for Png {
 impl fmt::Display for Png {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "Png {{",)?;
-        writeln!(f, "  Header: {:?}", self.header())?;
-        writeln!(f, "  Chunks: {{")?;
+        writeln!(f, "\tHeader: {:?}", self.header())?;
+        writeln!(f, "\tChunks: {{")?;
         for chunk in self.chunks.iter() {
-            // TODO: pretty indentation
-            write!(f, "{}", chunk)?;
+            write!(f, "\t\t{}", chunk)?;
         }
+        writeln!(f, "\t}}",)?;
         writeln!(f, "}}",)?;
         Ok(())
     }

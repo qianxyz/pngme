@@ -114,13 +114,12 @@ impl TryFrom<&[u8]> for Chunk {
 
 impl fmt::Display for Chunk {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(f, "Chunk {{",)?;
-        writeln!(f, "  Length: {}", self.length())?;
-        writeln!(f, "  Type: {}", self.chunk_type())?;
-        writeln!(f, "  Data: {} bytes", self.data().len())?;
-        writeln!(f, "  Crc: {}", self.crc())?;
-        writeln!(f, "}}",)?;
-        Ok(())
+        writeln!(
+            f,
+            "Chunk {{ Length: {}, Type: {} }}",
+            self.length(),
+            self.chunk_type()
+        )
     }
 }
 
