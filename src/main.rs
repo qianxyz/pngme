@@ -7,12 +7,17 @@ mod png;
 
 pub use error::{Error, Result};
 
+use args::{Cli, Commands};
 use clap::Parser;
+use commands::{decode, encode, print_chunks, remove};
 
 fn main() -> Result<()> {
-    let cli = args::Cli::parse();
+    let cli = Cli::parse();
 
-    println!("{:?}", cli);
-
-    Ok(())
+    match cli.command {
+        Commands::Encode(args) => encode(args),
+        Commands::Decode(args) => decode(args),
+        Commands::Remove(args) => remove(args),
+        Commands::Print(args) => print_chunks(args),
+    }
 }
