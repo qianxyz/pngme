@@ -1,3 +1,6 @@
+// TODO: perform various checks on chunk types.
+// You shouldn't be messing around with some reserved chunks!
+
 use std::fs;
 use std::str::FromStr;
 
