@@ -13,7 +13,7 @@ fn parse_chunk_type(s: &str) -> Result<ChunkType, String> {
     // - PngMeError::InvalidChunkType (contains non-alphabetic bytes)
     // Since we use dyn Error here, we cannot match on error types.
     // TODO: wrap TryFromSliceError into PngMeError enum member
-    ChunkType::from_str(s).map_err(|_| format!("invalid chunk type {}", s))
+    ChunkType::from_str(s).map_err(|_| format!("must be 4 letters"))
 }
 
 #[derive(Parser, Debug)]
