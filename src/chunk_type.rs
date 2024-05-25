@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
@@ -63,8 +61,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
 
 impl fmt::Display for ChunkType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = std::str::from_utf8(&self.bytes)
-            .expect("validated when constructed");
+        let s = std::str::from_utf8(&self.bytes).expect("validated when constructed");
         write!(f, "{}", s)
     }
 }
@@ -170,8 +167,7 @@ mod tests {
 
     #[test]
     pub fn test_chunk_type_trait_impls() {
-        let chunk_type_1: ChunkType =
-            TryFrom::try_from([82, 117, 83, 116]).unwrap();
+        let chunk_type_1: ChunkType = TryFrom::try_from([82, 117, 83, 116]).unwrap();
         let chunk_type_2: ChunkType = FromStr::from_str("RuSt").unwrap();
         let _chunk_string = format!("{}", chunk_type_1);
         let _are_chunks_equal = chunk_type_1 == chunk_type_2;

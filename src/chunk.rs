@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::convert::TryFrom;
 use std::fmt;
 use std::io::{BufReader, Read};
@@ -107,8 +105,6 @@ impl TryFrom<&[u8]> for Chunk {
         } else {
             Err(InvalidCrc(chunk_candidate.crc, crc).into())
         }
-
-        // TODO: should I check the excessive bytes?
     }
 }
 
@@ -116,9 +112,11 @@ impl fmt::Display for Chunk {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "Chunk {{ Length: {}, Type: {} }}",
+            "Chunk {{ Length: {}, Type: {}, Data: {} bytes, Crc: {} }}",
             self.length(),
-            self.chunk_type()
+            self.chunk_type(),
+            self.data().len(),
+            self.crc()
         )
     }
 }
@@ -132,8 +130,7 @@ mod tests {
     fn testing_chunk() -> Chunk {
         let data_length: u32 = 42;
         let chunk_type = "RuSt".as_bytes();
-        let message_bytes =
-            "This is where your secret message will be!".as_bytes();
+        let message_bytes = "This is where your secret message will be!".as_bytes();
         let crc: u32 = 2882656334;
 
         let chunk_data: Vec<u8> = data_length
@@ -175,8 +172,7 @@ mod tests {
     fn test_chunk_string() {
         let chunk = testing_chunk();
         let chunk_string = chunk.data_as_string().unwrap();
-        let expected_chunk_string =
-            String::from("This is where your secret message will be!");
+        let expected_chunk_string = String::from("This is where your secret message will be!");
         assert_eq!(chunk_string, expected_chunk_string);
     }
 
@@ -190,8 +186,7 @@ mod tests {
     fn test_valid_chunk_from_bytes() {
         let data_length: u32 = 42;
         let chunk_type = "RuSt".as_bytes();
-        let message_bytes =
-            "This is where your secret message will be!".as_bytes();
+        let message_bytes = "This is where your secret message will be!".as_bytes();
         let crc: u32 = 2882656334;
 
         let chunk_data: Vec<u8> = data_length
@@ -206,8 +201,7 @@ mod tests {
         let chunk = Chunk::try_from(chunk_data.as_ref()).unwrap();
 
         let chunk_string = chunk.data_as_string().unwrap();
-        let expected_chunk_string =
-            String::from("This is where your secret message will be!");
+        let expected_chunk_string = String::from("This is where your secret message will be!");
 
         assert_eq!(chunk.length(), 42);
         assert_eq!(chunk.chunk_type().to_string(), String::from("RuSt"));
@@ -219,8 +213,7 @@ mod tests {
     fn test_invalid_chunk_from_bytes() {
         let data_length: u32 = 42;
         let chunk_type = "RuSt".as_bytes();
-        let message_bytes =
-            "This is where your secret message will be!".as_bytes();
+        let message_bytes = "This is where your secret message will be!".as_bytes();
         let crc: u32 = 2882656333;
 
         let chunk_data: Vec<u8> = data_length
@@ -241,8 +234,7 @@ mod tests {
     pub fn test_chunk_trait_impls() {
         let data_length: u32 = 42;
         let chunk_type = "RuSt".as_bytes();
-        let message_bytes =
-            "This is where your secret message will be!".as_bytes();
+        let message_bytes = "This is where your secret message will be!".as_bytes();
         let crc: u32 = 2882656334;
 
         let chunk_data: Vec<u8> = data_length
