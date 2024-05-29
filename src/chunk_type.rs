@@ -2,8 +2,7 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::error::PngMeError::InvalidChunkType;
-use crate::{Error, Result};
+use crate::error::Error;
 
 /// A validated PNG chunk type. See the PNG spec for more details.
 /// http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html
@@ -50,9 +49,9 @@ impl ChunkType {
 impl TryFrom<[u8; 4]> for ChunkType {
     type Error = Error;
 
-    fn try_from(bytes: [u8; 4]) -> Result<Self> {
+    fn try_from(bytes: [u8; 4]) -> Result<Self, Error> {
         if !bytes.iter().all(|b| b.is_ascii_alphabetic()) {
-            Err(InvalidChunkType(bytes).into())
+            Err(Error::InvalidChunkTypeBytes(bytes))
         } else {
             Ok(Self { bytes })
         }
@@ -69,9 +68,12 @@ impl fmt::Display for ChunkType {
 impl FromStr for ChunkType {
     type Err = Error;
 
-    fn from_str(s: &str) -> Result<Self> {
-        let bytes: [u8; 4] = s.as_bytes().try_into()?;
-        Self::try_from(bytes)
+    fn from_str(s: &str) -> Result<Self, Error> {
+        let bytes: [u8; 4] = s
+            .as_bytes()
+            .try_into()
+            .map_err(|_| Error::InvalidChunkTypeString(s.to_string()))?;
+        Self::try_from(bytes).map_err(|_| Error::InvalidChunkTypeString(s.to_string()))
     }
 }
 

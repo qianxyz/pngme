@@ -1,33 +1,17 @@
-use std::fmt;
+use thiserror::Error;
 
-pub type Error = Box<dyn std::error::Error>;
-pub type Result<T> = std::result::Result<T, Error>;
-
-#[derive(Debug)]
-pub enum PngMeError {
-    InvalidChunkType([u8; 4]),
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("invalid chunk type: {0:?}")]
+    InvalidChunkTypeBytes([u8; 4]),
+    #[error("invalid chunk type: {0}")]
+    InvalidChunkTypeString(String),
+    #[error("invalid CRC: expected {0:x}, got {1:x}")]
     InvalidCrc(u32, u32),
-    ChunkTypeNotFound(String),
+    #[error("invalid header: {0:?}")]
     InvalidHeader([u8; 8]),
+    #[error("chunk type {0} not found")]
+    ChunkTypeNotFound(String),
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
 }
-
-impl fmt::Display for PngMeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::InvalidChunkType(bytes) => {
-                write!(f, "invalid chunk type: {:02x?}", bytes)
-            }
-            Self::InvalidCrc(expected, found) => {
-                write!(f, "invalid CRC: expect {}, found {}", expected, found)
-            }
-            Self::ChunkTypeNotFound(chunk_type) => {
-                write!(f, "chunk type {} not found", chunk_type)
-            }
-            Self::InvalidHeader(header) => {
-                write!(f, "invalid PNG header {:?}", header)
-            }
-        }
-    }
-}
-
-impl std::error::Error for PngMeError {}

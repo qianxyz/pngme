@@ -1,10 +1,10 @@
 use std::convert::TryFrom;
 use std::fmt;
 use std::io::{BufReader, Read};
+use std::string::FromUtf8Error;
 
 use crate::chunk_type::ChunkType;
-use crate::error::PngMeError::InvalidCrc;
-use crate::{Error, Result};
+use crate::error::Error;
 
 use crc::{Crc, CRC_32_ISO_HDLC};
 
@@ -60,8 +60,8 @@ impl Chunk {
 
     /// Returns the data stored in this chunk as a `String`. This function
     /// will return an error if the stored data is not valid UTF-8.
-    pub fn data_as_string(&self) -> Result<String> {
-        Ok(String::from_utf8(self.data.to_owned())?)
+    pub fn data_as_string(&self) -> Result<String, FromUtf8Error> {
+        String::from_utf8(self.data.to_owned())
     }
 
     /// Returns this chunk as a byte sequences described by the PNG spec.
@@ -85,7 +85,7 @@ impl Chunk {
 impl TryFrom<&[u8]> for Chunk {
     type Error = Error;
 
-    fn try_from(bytes: &[u8]) -> Result<Self> {
+    fn try_from(bytes: &[u8]) -> Result<Self, Error> {
         let mut reader = BufReader::new(bytes);
         let mut buffer = [0u8; 4];
 
@@ -103,7 +103,7 @@ impl TryFrom<&[u8]> for Chunk {
         if crc == chunk_candidate.crc {
             Ok(chunk_candidate)
         } else {
-            Err(InvalidCrc(chunk_candidate.crc, crc).into())
+            Err(Error::InvalidCrc(chunk_candidate.crc, crc))
         }
     }
 }

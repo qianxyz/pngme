@@ -5,8 +5,7 @@ use std::io::{BufReader, Read};
 use std::path::Path;
 
 use crate::chunk::Chunk;
-use crate::error::PngMeError::{ChunkTypeNotFound, InvalidHeader};
-use crate::{Error, Result};
+use crate::error::Error;
 
 /// A PNG container as described by the PNG spec
 /// http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
@@ -28,7 +27,7 @@ impl Png {
     }
 
     /// Creates a `Png` from a file path
-    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
         let bytes = fs::read(path)?;
         Self::try_from(bytes.as_ref())
     }
@@ -40,7 +39,7 @@ impl Png {
 
     /// Searches for a `Chunk` with the specified `chunk_type` and removes
     /// the first matching `Chunk` from this `Png` list of chunks.
-    pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
+    pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk, Error> {
         if let Some(index) = self
             .chunks
             .iter()
@@ -48,7 +47,7 @@ impl Png {
         {
             Ok(self.chunks.remove(index))
         } else {
-            Err(ChunkTypeNotFound(chunk_type.to_string()).into())
+            Err(Error::ChunkTypeNotFound(chunk_type.to_string()))
         }
     }
 
@@ -83,17 +82,18 @@ impl Png {
 impl TryFrom<&[u8]> for Png {
     type Error = Error;
 
-    fn try_from(bytes: &[u8]) -> Result<Png> {
+    fn try_from(bytes: &[u8]) -> Result<Png, Error> {
         let mut reader = BufReader::new(bytes);
 
         let mut header = [0u8; 8];
         reader.read_exact(&mut header)?;
         if header != Self::STANDARD_HEADER {
-            return Err(InvalidHeader(header).into());
+            return Err(Error::InvalidHeader(header));
         }
 
         let mut chunks = Vec::new();
 
+        // TODO: This can be done with a index pointer to avoid allocation
         let mut length_buffer = [0u8; 4];
         while reader.read_exact(&mut length_buffer).is_ok() {
             let length = u32::from_be_bytes(length_buffer);
@@ -146,7 +146,7 @@ mod tests {
         Png::from_chunks(chunks)
     }
 
-    fn chunk_from_strings(chunk_type: &str, data: &str) -> Result<Chunk> {
+    fn chunk_from_strings(chunk_type: &str, data: &str) -> Result<Chunk, Error> {
         use std::str::FromStr;
 
         let chunk_type = ChunkType::from_str(chunk_type)?;
