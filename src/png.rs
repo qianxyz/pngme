@@ -51,6 +51,38 @@ impl Png {
         }
     }
 
+    /// Searches for chunks with the specified chunk type, then removes
+    /// and returns all of them.
+    pub fn remove_chunks(&mut self, chunk_type: &str) -> Vec<Chunk> {
+        let mut removed = Vec::new();
+        self.chunks.retain(|c| {
+            if c.chunk_type().bytes() == chunk_type.as_bytes() {
+                removed.push(c.clone());
+                false
+            } else {
+                true
+            }
+        });
+        removed
+    }
+
+    /// Removes and returns all chunks that satisfy the predicate.
+    pub fn remove_chunks_filtered<F>(&mut self, filter: F) -> Vec<Chunk>
+    where
+        F: Fn(&Chunk) -> bool,
+    {
+        let mut removed = Vec::new();
+        self.chunks.retain(|c| {
+            if filter(c) {
+                removed.push(c.clone());
+                false
+            } else {
+                true
+            }
+        });
+        removed
+    }
+
     /// The header of this PNG.
     pub fn header(&self) -> &[u8; 8] {
         &self.header
@@ -67,6 +99,23 @@ impl Png {
         self.chunks
             .iter()
             .find(|c| c.chunk_type().bytes() == chunk_type.as_bytes())
+    }
+
+    /// Searches for chunks with the specified chunk type and returns
+    /// all the matching chunks.
+    pub fn chunks_by_type(&self, chunk_type: &str) -> Vec<&Chunk> {
+        self.chunks
+            .iter()
+            .filter(|c| c.chunk_type().bytes() == chunk_type.as_bytes())
+            .collect()
+    }
+
+    /// Searches for chunks that match the provided filter.
+    pub fn chunks_filtered<F>(&self, filter: F) -> Vec<&Chunk>
+    where
+        F: Fn(&Chunk) -> bool,
+    {
+        self.chunks.iter().filter(|c| filter(c)).collect()
     }
 
     /// Returns this `Png` as a byte sequence. These bytes will contain

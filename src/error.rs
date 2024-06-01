@@ -12,6 +12,8 @@ pub enum Error {
     InvalidHeader([u8; 8]),
     #[error("chunk type {0} not found")]
     ChunkTypeNotFound(String),
+    #[error("chunk type {0} is reserved")]
+    ReservedChunkType(String),
     #[error(transparent)]
     Io(#[from] std::io::Error),
 }
