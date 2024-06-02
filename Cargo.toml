@@ -10,3 +10,4 @@ description = "Hide secret messages in PNG files"
 clap = { version = "3.2.21", features = ["derive"] }
 crc = "3.0.0"
 thiserror = "1.0"
+anyhow = "1.0"
