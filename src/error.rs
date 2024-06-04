@@ -1,4 +1,5 @@
 use thiserror::Error;
+use wasm_bindgen::JsValue;
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -16,4 +17,10 @@ pub enum Error {
     ReservedChunkType(String),
     #[error(transparent)]
     Io(#[from] std::io::Error),
+}
+
+impl Into<JsValue> for Error {
+    fn into(self) -> JsValue {
+        JsValue::from_str(&self.to_string())
+    }
 }

@@ -10,17 +10,20 @@ pub use chunk_type::ChunkType;
 pub use error::Error;
 pub use png::Png;
 
+use wasm_bindgen::prelude::*;
+
 // https://www.w3.org/TR/2003/REC-PNG-20031110/#11Chunks
-const RESERVED_CHUNK_TYPES: [&str; 18] = [
+pub const RESERVED_CHUNK_TYPES: [&str; 18] = [
     "IHDR", "PLTE", "IDAT", "IEND", "tRNS", "cHRM", "gAMA", "iCCP", "sBIT", "sRGB", "tEXt", "zTXt",
     "iTXt", "bKGD", "hIST", "pHYs", "sPLT", "tIME",
 ];
 
 /// The default chunk type when the user doesn't specify one.
 /// This chunk type is ancillary (not critical), private, and safe to copy.
-const DEFAULT_CHUNK_TYPE: &str = "ruSt";
+pub const DEFAULT_CHUNK_TYPE: &str = "ruSt";
 
 /// Encodes a message into a PNG file and saves the result
+#[wasm_bindgen]
 pub fn encode(
     png_data: Vec<u8>,
     chunk_type: Option<String>,
@@ -46,6 +49,7 @@ pub fn encode(
 }
 
 /// Searches for a message hidden in a PNG file and prints the message if found
+#[wasm_bindgen]
 pub fn decode(png_data: Vec<u8>, chunk_type: Option<String>) -> Result<Vec<String>, Error> {
     let png = Png::try_from(png_data.as_ref())?;
 
@@ -66,6 +70,7 @@ pub fn decode(png_data: Vec<u8>, chunk_type: Option<String>) -> Result<Vec<Strin
 }
 
 /// Removes a chunk from a PNG file and saves the result
+#[wasm_bindgen]
 pub fn remove(png_data: Vec<u8>, chunk_type: Option<String>) -> Result<Vec<u8>, Error> {
     let mut png = Png::try_from(png_data.as_ref())?;
 
@@ -86,6 +91,7 @@ pub fn remove(png_data: Vec<u8>, chunk_type: Option<String>) -> Result<Vec<u8>, 
 }
 
 /// Prints all of the chunks in a PNG file
+#[wasm_bindgen]
 pub fn print_chunks(png_data: Vec<u8>) -> Result<String, Error> {
     let png = Png::try_from(png_data.as_ref())?;
 
