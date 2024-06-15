@@ -61,3 +61,37 @@ decodeButton.addEventListener("click", () => {
     alert("No message found in the image");
   }
 });
+
+// Remove
+
+const removeButton = document.getElementById("removeButton");
+const removeChunkType = document.getElementById("removeChunkType");
+
+removeButton.addEventListener("click", () => {
+  if (!imageBytes) {
+    alert("Please upload an image first");
+    return;
+  }
+
+  const chunkTypeValue = removeChunkType.value || null;
+  imageBytes = wasm.remove(imageBytes, chunkTypeValue);
+  preview.src =
+    "data:image/png;base64," + Buffer.from(imageBytes).toString("base64");
+
+  alert("Chunk removed successfully");
+});
+
+// Print chunks
+
+const printChunksButton = document.getElementById("printButton");
+const printChunksOutput = document.getElementById("printChunks");
+
+printChunksButton.addEventListener("click", () => {
+  if (!imageBytes) {
+    alert("Please upload an image first");
+    return;
+  }
+
+  const chunks = wasm.print_chunks(imageBytes);
+  printChunksOutput.value = chunks;
+});

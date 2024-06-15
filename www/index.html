@@ -11,6 +11,8 @@
 
 <body class="container p-3">
 
+  <h1 class="text-center m-3">PwNGed</h1>
+
   <div class="row">
 
     <div class="col-lg">
@@ -70,11 +72,19 @@
         </div>
 
         <div class="tab-pane fade" id="remove-tab-pane" role="tabpanel" aria-labelledby="remove-tab" tabindex="0">
-          remove
+          <div class="mb-3">
+            <label for="removeChunkType" class="form-label">Chunk Type</label>
+            <input class="form-control" type="text" id="removeChunkType">
+          </div>
+          <button id="removeButton" type="button" class="btn btn-primary w-100">Remove</button>
         </div>
 
         <div class="tab-pane fade" id="print-tab-pane" role="tabpanel" aria-labelledby="print-tab" tabindex="0">
-          print
+          <div class="mb-3">
+            <label for="printChunks" class="form-label">Chunks data</label>
+            <textarea class="form-control" id="printChunks" rows="3" disabled readonly></textarea>
+          </div>
+          <button id="printButton" type="button" class="btn btn-primary w-100">Print</button>
         </div>
 
       </div>
