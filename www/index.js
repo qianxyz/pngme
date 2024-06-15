@@ -1,7 +1,7 @@
 import * as wasm from "wasm-pngme";
 
-var upload = document.getElementById("upload");
-var preview = document.getElementById("preview");
+const upload = document.getElementById("upload");
+const preview = document.getElementById("preview");
 var imageBytes;
 
 upload.addEventListener("change", () => {
@@ -17,9 +17,11 @@ upload.addEventListener("change", () => {
   }
 });
 
-var encodeButton = document.getElementById("encode");
-var chunkType = document.getElementById("chunkType");
-var message = document.getElementById("message");
+// Encode
+
+const encodeButton = document.getElementById("encodeButton");
+const encodeChunkType = document.getElementById("encodeChunkType");
+const encodeMessage = document.getElementById("encodeMessage");
 
 encodeButton.addEventListener("click", () => {
   if (!imageBytes) {
@@ -27,10 +29,35 @@ encodeButton.addEventListener("click", () => {
     return;
   }
 
-  const chunkTypeValue = chunkType.value;
-  const messageValue = message.value;
+  const chunkTypeValue = encodeChunkType.value || null;
+  const messageValue = encodeMessage.value;
 
-  const newImageBytes = wasm.encode(imageBytes, chunkTypeValue, messageValue);
+  imageBytes = wasm.encode(imageBytes, chunkTypeValue, messageValue);
   preview.src =
-    "data:image/png;base64," + Buffer.from(newImageBytes).toString("base64");
+    "data:image/png;base64," + Buffer.from(imageBytes).toString("base64");
+
+  alert("Message encoded successfully");
+});
+
+// Decode
+
+const decodeButton = document.getElementById("decodeButton");
+const decodeChunkType = document.getElementById("decodeChunkType");
+const decodeMessage = document.getElementById("decodeMessage");
+
+decodeButton.addEventListener("click", () => {
+  if (!imageBytes) {
+    alert("Please upload an image first");
+    return;
+  }
+
+  const chunkTypeValue = decodeChunkType.value || null;
+  const message = wasm.decode(imageBytes, chunkTypeValue);
+
+  if (message.length > 0) {
+    decodeMessage.value = message.join("\n");
+    alert("Message decoded successfully");
+  } else {
+    alert("No message found in the image");
+  }
 });
