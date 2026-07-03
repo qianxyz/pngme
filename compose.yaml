@@ -1,0 +1,5 @@
+services:
+  pngme:
+    build: .
+    ports:
+      - "8084:80"
